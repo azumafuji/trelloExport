@@ -9,7 +9,7 @@
 // Variables
 var $excel_btn,
     addInterval,
-    columnHeadings = ['List', 'ID', 'Title', 'Description', 'Points', 'Last Activity', 'Due', 'Members', 'Labels'];
+    columnHeadings = ['List', 'ID', 'Title', 'Description', 'Points', 'Created Date', 'Last Activity', 'Due', 'Members', 'Labels'];
 
 window.URL = window.webkitURL || window.URL;
 
@@ -82,6 +82,17 @@ function createExcelExport() {
             wArchived.data.push([]);
             wArchived.data[0] = columnHeadings;
             
+            console.log(data);
+            
+            // Iterate through actions and build array of created dates
+            
+            var createdDates = {}
+            $.each(data.actions, function(key, action){
+                if (action.type == "createCard") {
+                    createdDates[action.data.card.id] = new Date(action.date);
+                }                
+            })
+                        
             // This iterates through each list and builds the dataset                     
             $.each(data.lists, function (key, list) {
                 var list_id = list.id;
@@ -150,6 +161,7 @@ function createExcelExport() {
                             title,
                             card.desc,
                             points,
+                            createdDates[card.id],
                             lastActivity,
                             due,
                             memberInitials.toString(),
