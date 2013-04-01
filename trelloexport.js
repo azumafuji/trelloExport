@@ -9,7 +9,7 @@
 // Variables
 var $excel_btn,
     addInterval,
-    columnHeadings = ['List', 'Title', 'Description', 'Points', 'Due', 'Members', 'Labels'];
+    columnHeadings = ['List', 'ID', 'Title', 'Description', 'Points', 'Last Activity', 'Due', 'Members', 'Labels'];
 
 window.URL = window.webkitURL || window.URL;
 
@@ -105,6 +105,7 @@ function createExcelExport() {
                         title = '[archived] ' + title;
                     }
                     
+                    var lastActivity = card.dateLastActivity;
                     var due = card.due || '';
                     
                     //Get all the Member IDs
@@ -136,11 +137,20 @@ function createExcelExport() {
                         due = d;
                     }
                     
+                    if (lastActivity !== '' ){
+                        var d = new Date(lastActivity);
+                        lastActivity = d;
+                    }
+                    
+                    var cardID = card.idShort;
+                    
                     var rowData = [
                             listName,
+                            cardID,
                             title,
                             card.desc,
                             points,
+                            lastActivity,
                             due,
                             memberInitials.toString(),
                             labels.toString()
