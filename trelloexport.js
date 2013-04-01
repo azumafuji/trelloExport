@@ -86,11 +86,23 @@ function createExcelExport() {
             
             // Iterate through actions and build array of created dates
             
-            var createdDates = {}
+            var createdDates = {};
+            var actionDate = new Date();
+            var actionCreated = new Date();
             $.each(data.actions, function(key, action){
-                if (action.type == "createCard") {
-                    createdDates[action.data.card.id] = new Date(action.date);
-                }                
+                
+                if (action.type == "createCard" || action.type == "copyCard") {                    
+                    actionDate = new Date(action.date);
+                    actionCreated = createdDates[action.data.card.id];
+                    if (actionCreated == undefined) {
+                        createdDates[action.data.card.id] = actionDate;    
+                    } else {
+                        if (actionDate < actionCreated) {
+                            createdDates[action.data.card.id] = actionDate;
+                        }
+                    }
+                }
+                                
             })
                         
             // This iterates through each list and builds the dataset                     
@@ -154,6 +166,8 @@ function createExcelExport() {
                     }
                     
                     var cardID = card.idShort;
+                    
+                    var cardDate = createdDates[card.id] || "Unknown";
                     
                     var rowData = [
                             listName,
